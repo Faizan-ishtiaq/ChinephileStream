@@ -4,13 +4,20 @@ import { API_KEY,BASE_URL,IMG_URL } from "../api/Tmdb";
 const Movies = () =>{
     const [movies,setMovies]=useState([])
     const [type,setType]=useState("popular")
+    const [page,setPage]=useState(1)
 
     useEffect( () =>{
-       fetch(`${BASE_URL}/movie/${type}?api_key=${API_KEY}`)
+       fetch(`${BASE_URL}/movie/${type}?api_key=${API_KEY}&page=${page}`)
         .then(res => res.json())
         .then(data => setMovies(data.results))
         .catch(err => console.log(err))
-    },[type])
+    },[type,page])
+
+      const handleTypeChange=(newType)=>{
+    setType(newType)
+    setPage(1)
+
+    }
     return(
 
          <div className="p-3 mt-8 bg-[#0f0f0f] text-[#d3d3d3]" >
@@ -18,10 +25,10 @@ const Movies = () =>{
               
 
             <h1 className="text-center text-5xl font-bold mb-3 text-white" > Movies</h1>
-             <button className="bg-red-600 text-white m-4 p-3  px-4 py-3 rounded-full transition-transform duration-300 hover:scale-105"  onClick={()=>setType("upcoming")}>Upcoming</button>
-             <button className="bg-red-600 text-white m-4 p-3  px-4 py-3 rounded-full transition-transform duration-300 hover:scale-105"  onClick={()=>setType("top_rated")}>Top rated</button>
-             <button className="bg-red-600 text-white m-4 p-3  px-4 py-3 rounded-full transition-transform duration-300 hover:scale-105"   onClick={()=>setType("now_playing")}>Now Playing</button>
-             <button className="bg-red-600 text-white m-4 p-3  px-4 py-3 rounded-full transition-transform duration-300 hover:scale-105" onClick={()=>setType("popular")}>Popular</button>
+                <button className={ type==="popular" ? "bg-red-800 border-amber-50 text-white m-4 p-3  px-4 py-3 rounded-full transition-transform duration-300 hover:scale-105" : "bg-red-600 text-white m-4 p-3  px-4 py-3 rounded-full transition-transform duration-300 hover:scale-105"}  onClick={()=>handleTypeChange("popular")}>popular</button>
+             <button className={ type==="top_rated" ? "bg-red-800 border-amber-50 text-white m-4 p-3  px-4 py-3 rounded-full transition-transform duration-300 hover:scale-105" : "bg-red-600 text-white m-4 p-3  px-4 py-3 rounded-full transition-transform duration-300 hover:scale-105"} onClick={()=>handleTypeChange("top_rated")}>Top rated</button>
+             <button className={ type==="now_playing" ? "bg-red-800 border-amber-50 text-white m-4 p-3  px-4 py-3 rounded-full transition-transform duration-300 hover:scale-105" : "bg-red-600 text-white m-4 p-3  px-4 py-3 rounded-full transition-transform duration-300 hover:scale-105"}   onClick={()=>handleTypeChange("now_playing")}>Now Playing</button>
+             <button className={ type==="upcoming" ? "bg-red-800 border-amber-50 text-white m-4 p-3  px-4 py-3 rounded-full transition-transform duration-300 hover:scale-105" : "bg-red-600 text-white m-4 p-3  px-4 py-3 rounded-full transition-transform duration-300 hover:scale-105"} onClick={()=>handleTypeChange("upcoming")}>upcoming</button>
 
                      
             <div  className="flex flex-wrap gap-6 " >
@@ -29,9 +36,26 @@ const Movies = () =>{
                  return   <div key={movie.id} className="w-62 transition-transform duration-300 hover:scale-105" >
                         <img src={IMG_URL + movie.poster_path} alt={movie.title} className="rounded-2xl w-full" />
                         <p  className="text-center text-2xl">{movie.title}</p>
+                        <button 
+                        onClick={()=> window.open(`https://vidsrc.win/watch/${movie.id}`)} 
+                        className="w-full bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-800 transition"
+                            >Watch Movie</button>
                     </div>
                 })}
 
+            </div>
+
+            <div className="flex justify-center gap-4 mt-6" >
+                <button 
+                onClick={()=>setPage(page-1)}
+                disabled={page === 1}
+                className="px-4 py-2 bg-gray-700 text-white rounded"
+                 > Previous</button>
+                    <p className="px-4 py-2 text-white font-bold">Page {page}</p>
+                     <button 
+                onClick={()=>setPage(page+1)}
+                className="px-4 py-2 bg-gray-700 text-white rounded"
+                    > Next</button>
             </div>
             
         </div>
