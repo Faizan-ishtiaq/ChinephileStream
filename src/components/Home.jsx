@@ -14,17 +14,22 @@ const Home = () =>{
     return(
 
          <div className="p-3 mt-8 bg-[#0f0f0f] text-[#d3d3d3]" >
-
-              
-
-          
-
-                     
             <div  className="flex flex-wrap gap-6 " >
                 {movies.map(movie =>{
-                 return   <div key={movie.id} className="w-62 transition-transform duration-300 hover:scale-105" >
-                        <img src={IMG_URL + movie.poster_path} alt={movie.title} className="rounded-2xl w-full" />
-                        <p  className="text-center text-2xl">{movie.title}</p>
+                 return   <div key={movie.id} className="w-62 relative group transition-transform duration-300 hover:scale-105" >
+                        <img src={IMG_URL + movie.poster_path} alt={movie.title} className="rounded-2xl w-full h-[340px] object-cover" />
+                        <div className="absolute inset-0 pointer-events-none bg-black/80 text-white flex flex-col justify-center items-center p-3 opacity-0 group-hover:opacity-100 transition duration-300 rounded-1xl">
+                        <p className="font-bold text-lg text-center">Title: {movie.title}</p>
+                        <p className="text-sm mt-1">Rating: {movie.vote_average.toFixed(1)}</p>
+                        <p className="text-sm">Release: {movie.
+release_date.slice(0,4)}</p>
+                        <p className="text-sm mt-0.5">Overview :  {movie.overview.slice(0,100)}...</p>
+                        </div>
+                        <p  className="text-center text-2xl mt-2 h-[60px] flex items-center justify-center">{movie.title}</p>
+                         <button 
+                        onClick={()=> window.open(`https://vidsrc.win/watch/${movie.id}`)} 
+                        className="w-full bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-800 transition"
+                            >Watch Movie</button>
                     </div>
                 })}
 
