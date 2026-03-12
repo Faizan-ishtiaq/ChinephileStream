@@ -5,7 +5,7 @@ import {Navigation} from "swiper/modules"
 
 import "swiper/css"
 import "swiper/css/navigation"
-const MovieRow = ({ title, endpoint }) => {
+const MovieRow = ({ title, endpoint,mediaType,items }) => {
 
 const [movies,setMovies] = useState([])
 
@@ -17,11 +17,13 @@ fetch(`${BASE_URL}/${endpoint}?api_key=${API_KEY}`)
 
 },[endpoint])
 
+const displayItems= items && items.leght > 0 ? items : movies
+
 return(
 
 <div className="mb-5">
 
-<h2 className="text-3xl text-white mb-2">{title}</h2>
+<h2 className="text-3xl text-white mb-4">{title}</h2>
 
 <Swiper
 modules={[Navigation]}
@@ -35,18 +37,32 @@ breakpoints={{
 }}
 >
 
-{movies.map(movie=>(
+{displayItems.map(movie=>(
 <SwiperSlide key={movie.id}>
 
-<div className="hover:scale-105 transition">
+<div className="hover:scale-105 transition h">
 
 <img
 src={IMG_URL + movie.poster_path}
 alt={movie.title}
-className="rounded-lg w-full"
+className="rounded-lg w-full "
 />
 
-<p className="text-center text-white text-sm mt-2">{ movie.title || movie.name}</p>
+<p className="text-center text-white text-xl mt-2">{ movie.title || movie.name}</p>
+
+   <button
+                onClick={() =>
+                  window.open(
+                    mediaType === "movie"
+                      ? `https://vsembed.ru/embed/movie/${movie.id}`
+                      : `https://vsembed.ru/embed/tv/${movie.id}`,
+                    "_blank"
+                  )
+                }
+                className="w-full bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-800 transition"
+              >
+                Watch Now
+              </button>
 
   
 

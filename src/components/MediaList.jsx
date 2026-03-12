@@ -8,6 +8,7 @@ const MediaList = ({ mediaType, query }) => {
   const [searchResult, setSearchResult] = useState([]);
 
   const safeQuery = (query || "").trim();
+  
 
   useEffect(() => {
     if (safeQuery !== "") return;
@@ -86,7 +87,7 @@ const MediaList = ({ mediaType, query }) => {
               <img
                 src={IMG_URL + item.poster_path}
                 alt={itemTitle}
-                className="rounded-2xl w-full h-[400px] sm:h-[270px] md:h-[400px] lg:h-[430px] xl:h-[300px] object-cover"
+                className="rounded-2xl w-full h-[400px] sm:h-[270px] md:h-[400px] lg:h-[430px] xl:h-[430px] object-cover"
               />
 
               <div className="absolute inset-0 pointer-events-none bg-black/80 text-white flex flex-col justify-center items-center p-3 opacity-0 group-hover:opacity-100 transition duration-300 rounded-1xl">
