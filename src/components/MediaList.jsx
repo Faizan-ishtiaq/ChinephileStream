@@ -81,12 +81,12 @@ const MediaList = ({ mediaType, query }) => {
           return (
             <div
               key={item.id}
-              className="w-full sm:w-[40%] md:w-[30%] lg:w-[22%] xl:w-[18%] relative group transition-transform duration-300 hover:scale-105"
+              className="w-[85%] sm:w-[40%] md:w-[30%] lg:w-[22%] xl:w-[18%] relative group transition-transform duration-300 hover:scale-105"
             >
               <img
                 src={IMG_URL + item.poster_path}
                 alt={itemTitle}
-                className="rounded-2xl w-full h-[430px] sm:h-[270px] md:h-[400px] lg:h-[430px] xl:h-[300px] object-cover"
+                className="rounded-2xl w-full h-[400px] sm:h-[270px] md:h-[400px] lg:h-[430px] xl:h-[300px] object-cover"
               />
 
               <div className="absolute inset-0 pointer-events-none bg-black/80 text-white flex flex-col justify-center items-center p-3 opacity-0 group-hover:opacity-100 transition duration-300 rounded-1xl">

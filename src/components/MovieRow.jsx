@@ -19,9 +19,9 @@ fetch(`${BASE_URL}/${endpoint}?api_key=${API_KEY}`)
 
 return(
 
-<div className="mb-10">
+<div className="mb-5">
 
-<h2 className="text-3xl text-white mb-4">{title}</h2>
+<h2 className="text-3xl text-white mb-2">{title}</h2>
 
 <Swiper
 modules={[Navigation]}
@@ -46,7 +46,7 @@ alt={movie.title}
 className="rounded-lg w-full"
 />
 
-<p className="text-center text-sm mt-2">{movie.title}</p>
+<p className="text-center text-white text-sm mt-2">{ movie.title || movie.name}</p>
 
   
 
