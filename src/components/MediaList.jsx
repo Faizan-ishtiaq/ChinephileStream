@@ -73,7 +73,7 @@ const MediaList = ({ mediaType, query }) => {
       </div>
 
       {/* Grid */}
-      <div className="flex flex-wrap gap-6">
+      <div className="flex flex-wrap justify-center gap-6">
         {displayItems.map((item) => {
           const itemTitle = item.title || item.name;
           const releaseDate = item.release_date || item.first_air_date;
@@ -81,12 +81,12 @@ const MediaList = ({ mediaType, query }) => {
           return (
             <div
               key={item.id}
-              className="w-62 relative group transition-transform duration-300 hover:scale-105"
+              className="w-full sm:w-[45%] md:w-[30%] lg:w-[22%] xl:w-[18%] relative group transition-transform duration-300 hover:scale-105"
             >
               <img
                 src={IMG_URL + item.poster_path}
                 alt={itemTitle}
-                className="rounded-2xl w-full h-[340px] object-cover"
+                className="rounded-2xl w-full h-[430px] sm:h-[300px] md:h-[400px] lg:h-[430px] xl:h-[300px] object-cover"
               />
 
               <div className="absolute inset-0 pointer-events-none bg-black/80 text-white flex flex-col justify-center items-center p-3 opacity-0 group-hover:opacity-100 transition duration-300 rounded-1xl">

@@ -1,31 +1,80 @@
+import { Link } from "react-router-dom"
+import { useState } from "react"
 
-import {Link} from "react-router-dom"
+function Navbar({ query, setQuery }) {
 
-function Navbar({query,setQuery}) {
+const [menuOpen,setMenuOpen] = useState(false)
+
   return (
-    <nav className='flex items-center justify-around py-10  h-16 bg-[#e50914] text-white' >
-       <div>
-  <Link to={"/"}> <h1 className="text-3xl font-bold">CinephileStream</h1></Link>
-       </div>
 
-       <div>
-        <ul className="flex items-center gap-5 " >
-            
-              <li  className="text-2xl mx-3 font-bold  transition-transform duration-300 hover:scale-105"><Link to={"/movies"}>Movies</Link></li>
-              <li  className="text-2xl mx-3 font-bold  transition-transform duration-300 hover:scale-105"><Link to={"/tv_shows"}>Tv Shows</Link></li>
-              
+    <nav className="bg-[#e50914] text-white px-4">
+
+      <div className="flex items-center justify-between h-16">
+
+        {/* Logo */}
+        <Link to={"/"}>
+          <h1 className="text-xl md:text-3xl font-bold sm:text-lg">
+            CinephileStream
+          </h1>
+        </Link>
+
+        {/* Desktop Menu */}
+        <ul className="hidden md:flex items-center gap-6">
+
+          <li className="text-2xl font-bold hover:scale-105 transition">
+            <Link to="/movies">Movies</Link>
+          </li>
+
+          <li className="text-2xl font-bold hover:scale-105 transition">
+            <Link to="/tv_shows">TV Shows</Link>
+          </li>
+
         </ul>
-       </div>
-       <div>
-        <input 
-        type="text"
-        placeholder="Search..."
-        value={query}
-        onChange={(e)=>setQuery(e.target.value)}
-        className="p-2 rounded bg-gray-800 text-white outline-none"
-         />
-       </div>
+
+        {/* Search */}
+        <input
+          type="text"
+          placeholder="Search..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className="p-2 rounded bg-gray-800 text-white outline-none w-32 sm:w-48"
+        />
+
+        {/* Hamburger */}
+        <button
+          className="md:hidden text-3xl ml-3"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          ☰
+        </button>
+
+      </div>
+
+      {/* Mobile Menu */}
+      {menuOpen && (
+        <div className="md:hidden flex flex-col items-center gap-4 pb-4">
+
+          <Link
+            to="/movies"
+            onClick={() => setMenuOpen(false)}
+            className="text-xl font-bold"
+          >
+            Movies
+          </Link>
+
+          <Link
+            to="/tv_shows"
+            onClick={() => setMenuOpen(false)}
+            className="text-xl font-bold"
+          >
+            TV Shows
+          </Link>
+
+        </div>
+      )}
+
     </nav>
+
   )
 }
 
