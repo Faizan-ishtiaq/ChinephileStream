@@ -1,11 +1,27 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState,useReducer } from "react";
 import { API_KEY, BASE_URL, IMG_URL } from "../api/Tmdb";
 
 const MediaList = ({ mediaType, query }) => {
   const [items, setItems] = useState([]);
   const [type, setType] = useState("popular");
-  const [page, setPage] = useState(1);
   const [searchResult, setSearchResult] = useState([]);
+
+
+    const [state,dispatch]=useReducer(reducer,{page:1})
+
+    function reducer(state,action){
+      if (action.type==="next") {
+      return{page:state.page+1}
+      }
+       if (action.type==="previous") {
+      return{page:state.page-1}
+      }
+      if (action.type==="reset") {
+        return {page:1}
+      }
+
+      return state;
+    }
 
   const safeQuery = (query || "").trim();
   
@@ -13,11 +29,11 @@ const MediaList = ({ mediaType, query }) => {
   useEffect(() => {
     if (safeQuery !== "") return;
 
-    fetch(`${BASE_URL}/${mediaType}/${type}?api_key=${API_KEY}&page=${page}`)
+    fetch(`${BASE_URL}/${mediaType}/${type}?api_key=${API_KEY}&page=${state.page}`)
       .then((res) => res.json())
       .then((data) => setItems(data.results))
       .catch((err) => console.log(err));
-  }, [mediaType, type, page, safeQuery]);
+  }, [mediaType, type, state, safeQuery]);
 
   useEffect(() => {
     if (safeQuery === "") {
@@ -39,7 +55,7 @@ const MediaList = ({ mediaType, query }) => {
 
   const handleTypeChange = (newType) => {
     setType(newType);
-    setPage(1);
+    dispatch({type:"reset"});
   };
 
   const displayItems = searchResult.length > 0 ? searchResult : items;
@@ -134,17 +150,17 @@ const MediaList = ({ mediaType, query }) => {
       {searchResult.length === 0 && (
         <div className="flex justify-center gap-4 mt-6">
           <button
-            onClick={() => setPage(page - 1)}
-            disabled={page === 1}
+            onClick={() => dispatch({type:"previous"})}
+             disabled={state.page === 1}
             className="px-4 py-2 bg-gray-700 text-white rounded"
           >
             Previous
           </button>
 
-          <p className="px-4 py-2 text-white font-bold">Page {page}</p>
+          <p className="px-4 py-2 text-white font-bold">Page {state.page}</p>
 
           <button
-            onClick={() => setPage(page + 1)}
+            onClick={() => dispatch({type:"next"})}
             className="px-4 py-2 bg-gray-700 text-white rounded"
           >
             Next
