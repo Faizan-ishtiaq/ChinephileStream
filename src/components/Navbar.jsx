@@ -1,9 +1,34 @@
 import { Link } from "react-router-dom"
-import { useState } from "react"
+import { useState,useEffect } from "react"
+import { API_KEY, BASE_URL, IMG_URL } from "../api/Tmdb";
 
 function Navbar({ query, setQuery }) {
 
 const [menuOpen,setMenuOpen] = useState(false)
+const [suggestion,setSuggestion]=useState([])
+const [showSuggestion,setShowSuggestion]=useState(false)
+
+
+useEffect(()=>{
+  const safeQuery=(query|| "").trim()
+  if (safeQuery==="") {
+     setSuggestion([]);
+     setShowSuggestion(false)     
+     return;
+  }
+
+  const timer=setTimeout(()=>{
+    fetch(`${BASE_URL}/search/multi?api_key=${API_KEY}&query=${safeQuery}`)
+    .then(res=>res.json())
+  .then(data=>{setSuggestion(data.results.slice(0,5))
+          
+  })
+    .catch(err=>console.log(err));
+  },400);
+
+  return()=>clearTimeout(timer)
+
+},[query]);
 
   return (
 
@@ -32,13 +57,40 @@ const [menuOpen,setMenuOpen] = useState(false)
         </ul>
 
         {/* Search */}
+                <div className="relative">
         <input
           type="text"
           placeholder="Search..."
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e) =>{setQuery(e.target.value)
+            setShowSuggestion(true)
+          } }
           className="p-2 rounded bg-gray-800 text-white outline-none w-32 sm:w-48"
         />
+        { showSuggestion&&suggestion.length>0&&(
+          <div className="absolute top-12 left-0 w-full bg-[#141414] text-white rounded-md shadow-lg z-50 max-h-80 overflow-y-auto">
+            {suggestion.map((item)=>(
+              <div className="flex h-auto items-center gap-3 p-2 border-b border-gray-700 hover:bg-gay-800 cursor-pointer" key={item.id} 
+              onClick={()=>{
+                setQuery(item.title||item.name);
+                setSuggestion([]);
+                setShowSuggestion(false)
+              }
+            }> <img src={IMG_URL +item.poster_path} alt="" className="w-10 h-14 object-cover rounded" />
+            <div>
+              <p className="text-sm font-semi bold">
+                {item.title||item.name}
+              </p>
+              <p className="text-xs text-gray-400">
+                {item.media_type?.toUpperCase()}
+              </p>
+            </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
 
         {/* Hamburger */}
         <button

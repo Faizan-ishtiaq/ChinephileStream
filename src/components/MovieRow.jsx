@@ -30,7 +30,7 @@ const MovieRow = ({ title, endpoint, mediaType, items, query }) => {
     }
   }, [endpoint, mediaType, query]);
 
-  // ✅ FIXED typo (length)
+  
   const displayItems = items && items.length > 0 ? items : movies;
 
   return (
