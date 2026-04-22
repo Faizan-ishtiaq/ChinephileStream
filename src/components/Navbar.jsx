@@ -1,34 +1,24 @@
 import { Link } from "react-router-dom"
-import { useState,useEffect } from "react"
+import { useState } from "react"
 import { API_KEY, BASE_URL, IMG_URL } from "../api/Tmdb";
+import useFetch from "../Hooks/useFetch";
 
 function Navbar({ query, setQuery }) {
 
 const [menuOpen,setMenuOpen] = useState(false)
-const [suggestion,setSuggestion]=useState([])
 const [showSuggestion,setShowSuggestion]=useState(false)
 
+const safeQuery=(query||"").trim()
 
-useEffect(()=>{
-  const safeQuery=(query|| "").trim()
-  if (safeQuery==="") {
-     setSuggestion([]);
-     setShowSuggestion(false)     
-     return;
-  }
+const url =
+safeQuery
+?`${BASE_URL}/search/multi?api_key=${API_KEY}&query=${safeQuery}`
+:null;
 
-  const timer=setTimeout(()=>{
-    fetch(`${BASE_URL}/search/multi?api_key=${API_KEY}&query=${safeQuery}`)
-    .then(res=>res.json())
-  .then(data=>{setSuggestion(data.results.slice(0,5))
-          
-  })
-    .catch(err=>console.log(err));
-  },400);
+const {data,loading,error}=useFetch(url,400)
 
-  return()=>clearTimeout(timer)
+const suggestion=data.slice(0.4);
 
-},[query]);
 
   return (
 
@@ -67,18 +57,17 @@ useEffect(()=>{
           } }
           className="p-2 rounded bg-gray-800 text-white outline-none w-32 sm:w-48"
         />
-        { showSuggestion&&suggestion.length>0&&(
+        { showSuggestion&&safeQuery!==""&&suggestion.length>0&&(
           <div className="absolute top-12 left-0 w-full bg-[#141414] text-white rounded-md shadow-lg z-50 max-h-80 overflow-y-auto">
             {suggestion.map((item)=>(
-              <div className="flex h-auto items-center gap-3 p-2 border-b border-gray-700 hover:bg-gay-800 cursor-pointer" key={item.id} 
+              <div className="flex h-auto items-center gap-3 p-2 border-b border-gray-700 hover:bg-gray-800 cursor-pointer" key={item.id} 
               onClick={()=>{
                 setQuery(item.title||item.name);
-                setSuggestion([]);
                 setShowSuggestion(false)
               }
             }> <img src={IMG_URL +item.poster_path} alt="" className="w-10 h-14 object-cover rounded" />
             <div>
-              <p className="text-sm font-semi bold">
+              <p className="text-sm font-semibold">
                 {item.title||item.name}
               </p>
               <p className="text-xs text-gray-400">

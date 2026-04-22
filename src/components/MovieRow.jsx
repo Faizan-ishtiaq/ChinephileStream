@@ -1,34 +1,28 @@
-import { useEffect, useState } from "react";
 import { API_KEY, BASE_URL, IMG_URL } from "../api/Tmdb";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
+import useFetch from "../Hooks/useFetch";
 
 import "swiper/css";
 import "swiper/css/navigation";
 
 const MovieRow = ({ title, endpoint, mediaType, items, query }) => {
-  const [movies, setMovies] = useState([]);
 
-  useEffect(() => {
-    const safeQuery = (query || "").trim();
+  const safeQuery= (query || "").trim();
 
-    // 🔍 SEARCH MODE
-    if (safeQuery !== "") {
-      fetch(
-        `${BASE_URL}/search/${mediaType}?api_key=${API_KEY}&query=${safeQuery}`
-      )
-        .then((res) => res.json())
-        .then((data) => setMovies(data.results))
-        .catch((err) => console.log(err));
-    }
-    // 🎬 NORMAL MODE
-    else {
-      fetch(`${BASE_URL}/${endpoint}?api_key=${API_KEY}`)
-        .then((res) => res.json())
-        .then((data) => setMovies(data.results))
-        .catch((err) => console.log(err));
-    }
-  }, [endpoint, mediaType, query]);
+  const url=
+    safeQuery
+    ?`${BASE_URL}/search/${mediaType}?api_key=${API_KEY}&query=${safeQuery}`
+    :`${BASE_URL}/${endpoint}?api_key=${API_KEY}`
+
+    const {data:movies,loading,error}=useFetch(
+      url,
+      safeQuery ?500:0
+    );
+
+
+
+ 
 
   
   const displayItems = items && items.length > 0 ? items : movies;
@@ -37,7 +31,11 @@ const MovieRow = ({ title, endpoint, mediaType, items, query }) => {
     <div className="mb-5">
       <h2 className="text-3xl text-white mb-4">{title}</h2>
 
-      <Swiper
+      {loading && <p className="text-white text-3xl text-center">Loading...</p>}
+      {error && <p className="text-red-500 text-3xl "> {error}</p>}
+
+   {!loading&&!error&&(
+ <Swiper
         modules={[Navigation]}
         navigation
         spaceBetween={15}
@@ -79,6 +77,8 @@ const MovieRow = ({ title, endpoint, mediaType, items, query }) => {
           </SwiperSlide>
         ))}
       </Swiper>
+   )}
+     
     </div>
   );
 };

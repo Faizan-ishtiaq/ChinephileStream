@@ -1,10 +1,10 @@
-import { useEffect, useState,useReducer } from "react";
+import { useState,useReducer } from "react";
 import { API_KEY, BASE_URL, IMG_URL } from "../api/Tmdb";
+import useFetch from "../Hooks/useFetch";
 
 const MediaList = ({ mediaType, query }) => {
-  const [items, setItems] = useState([]);
   const [type, setType] = useState("popular");
-  const [searchResult, setSearchResult] = useState([]);
+  
 
 
     const [state,dispatch]=useReducer(reducer,{page:1})
@@ -24,41 +24,32 @@ const MediaList = ({ mediaType, query }) => {
     }
 
   const safeQuery = (query || "").trim();
+
+  const url=
+   safeQuery===""
+   ?`${BASE_URL}/${mediaType}/${type}?api_key=${API_KEY}&page=${state.page}`
+   : `${BASE_URL}/search/${mediaType}?api_key=${API_KEY}&query=${safeQuery}&page=1`;
+
+
+   const {data:displayItems,loading,error}=
+   useFetch(
+    url,
+    safeQuery?500:0
+   );
+
+
+
   
+  
+ 
 
-  useEffect(() => {
-    if (safeQuery !== "") return;
-
-    fetch(`${BASE_URL}/${mediaType}/${type}?api_key=${API_KEY}&page=${state.page}`)
-      .then((res) => res.json())
-      .then((data) => setItems(data.results))
-      .catch((err) => console.log(err));
-  }, [mediaType, type, state, safeQuery]);
-
-  useEffect(() => {
-    if (safeQuery === "") {
-      setSearchResult([]);
-      return;
-    }
-
-    const timer = setTimeout(() => {
-      fetch(`
-        ${BASE_URL}/search/${mediaType}?api_key=${API_KEY}&query=${safeQuery}&page=1`
-      )
-        .then((res) => res.json())
-        .then((data) => setSearchResult(data.results))
-        .catch((err) => console.log(err));
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [mediaType, safeQuery]);
-
+  
   const handleTypeChange = (newType) => {
     setType(newType);
     dispatch({type:"reset"});
   };
 
-  const displayItems = searchResult.length > 0 ? searchResult : items;
+
 
   const buttons =
     mediaType === "movie"
@@ -82,15 +73,24 @@ const MediaList = ({ mediaType, query }) => {
               type === btn ? "bg-gray-900 text-white" : "bg-gray-700 text-white"
             }`}
             onClick={() => handleTypeChange(btn)}
-            disabled={searchResult.length > 0}
+            disabled={safeQuery.length > 0}
           >
             {btn.replace("_", " ").toUpperCase()}
           </button>
         ))}
       </div>
 
+    {loading&&(
+      <p className="text-center text-white text-3xl mt-10">Loading...</p>
+    )}
+
+    {error&&(
+      <p className="text-center text-red-500 text-3xl mt-10">{error}</p>
+    )}
+
       {/* Grid */}
-      <div className="flex flex-wrap justify-center gap-6">
+      {!loading&&!error&&(
+       <div className="flex flex-wrap justify-center gap-6">
         {displayItems.map((item) => {
           const itemTitle = item.title || item.name;
           const releaseDate = item.release_date || item.first_air_date;
@@ -145,9 +145,11 @@ const MediaList = ({ mediaType, query }) => {
           );
         })}
       </div>
+      )}
+      
 
       {/* Pagination */}
-      {searchResult.length === 0 && (
+      {safeQuery.length === 0 && (
         <div className="flex justify-center gap-4 mt-6">
           <button
             onClick={() => dispatch({type:"previous"})}
